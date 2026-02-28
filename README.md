@@ -20,24 +20,7 @@ In Japan, this role is often called:
 
 ---
 
-# 🧭 PHASE 0 – Foundation Mindset
-
-### ✅ What companies expect (Japan)
-
-- Stability
-- Documentation skills
-- Incident response
-- Team communication (報連相)
-
-### ✅ Core mindset
-
-- “**Why did it break?**”
-- “**How to prevent it next time?**”
-- “**How to explain it clearly?**”
-
----
-
-# 📘 PHASE 1 – IT Basics (Must-have)
+# 📘 PHASE 1 – IT Basics (ITパスポート, **基本情報技術者試験**)
 
 ## 1️⃣ Computer & OS Fundamentals
 
@@ -104,7 +87,7 @@ nslookup google.com
 
 ---
 
-# 🖥️ PHASE 2 – Linux Server Mastery (CORE SKILL)
+# 🖥️ PHASE 2 – Linux Server Mastery (LPIC-1)
 
 ## 1️⃣ Linux File System
 
@@ -145,7 +128,11 @@ journalctl -u nginx
 
 ---
 
-# 🌐 PHASE 3 – Networking (Intermediate → Advanced)
+# 🖥️ PHASE 3 – Windows Server & Active Directory
+
+---
+
+# 🌐 PHASE 4 – Networking (CCNA)
 
 ## 🔹 Network Device Types
 
@@ -174,7 +161,11 @@ journalctl -u nginx
 
 ---
 
-# ☁️ PHASE 4 – Cloud Computing (JOB MAKER)
+# 🧪 PHASE 5 – Storage, Backup & DR concepts
+
+# 🔐 PHASE 6 – Virtualization & Containers (VMware, Docker, K8s basics)
+
+# ☁️ PHASE 7 – Cloud Computing (AWS SAA)
 
 ## 🔹 Cloud Types
 
@@ -205,7 +196,7 @@ User → ALB → EC2 → RDS
 
 ---
 
-# 🔐 PHASE 5 – Security Fundamentals
+# 🔐 PHASE 8 – Security (**情報セキュリティマネジメント試験**)
 
 ## 🔹 Security Types
 
@@ -231,7 +222,7 @@ fail2ban
 
 ---
 
-# 📊 PHASE 6 – Monitoring & Troubleshooting
+# 📊 PHASE 9 – Monitoring & Troubleshooting
 
 ## 🔹 Monitoring Tools
 
@@ -256,7 +247,7 @@ Alert → Analyze → Fix → Prevent → Report
 
 ---
 
-# 🤖 PHASE 7 – Automation & DevOps Basics
+# 🤖 PHASE 10 – Automation & DevOps Basics
 
 ## 🔹 Scripting
 
@@ -278,7 +269,7 @@ df -h > disk_report.txt
 
 ---
 
-# 🧪 PHASE 8 – Hands-On Projects (VERY IMPORTANT)
+# 🧪 PHASE 11 – Hands-On Projects (VERY IMPORTANT)
 
 ## 🔹 Project Ideas (Do ALL)
 
@@ -295,7 +286,7 @@ df -h > disk_report.txt
 
 ---
 
-# 🇯🇵 PHASE 9 – Japan Job Preparation
+# 🇯🇵 PHASE 12 – Japan Job Preparation
 
 ## 🔹 Japanese Technical Words
 
