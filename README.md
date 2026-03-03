@@ -93,6 +93,11 @@ nslookup google.com
 - Server management: iDRAC / iLO
 - Capacity planning & hardware troubleshooting
 
+## 4 Web servers
+	• Apache, Nginx
+	• IIS (Windows environments)
+	• SSL, reverse proxy, basic performance tuning
+
 # 🖥️ PHASE 2 – Linux Server Mastery (LPIC-1)
 
 ## 1️⃣ Linux File System
