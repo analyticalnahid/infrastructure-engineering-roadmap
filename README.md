@@ -170,6 +170,12 @@ journalctl -u nginx
 # 🧪 PHASE 5 – Storage, Backup & DR concepts
 
 # 🔐 PHASE 6 – Virtualization & Containers (VMware, Docker, K8s basics)
+	• VMware installation & configuration
+	• vCenter management
+	• VM migration (vMotion)
+	• Cloning, snapshots
+	• Roles & permissions
+	• Resource pools & templates
 
 # ☁️ PHASE 7 – Cloud Computing (AWS SAA)
 
