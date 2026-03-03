@@ -270,8 +270,14 @@ df -h > disk_report.txt
 
 - Terraform
 - Ansible
+- Chef
 
 ---
+
+## 🔹 Architecture as Code
+- Infra Reverse
+- Auto Documentation 
+- ArchOps
 
 # 🧪 PHASE 11 – Hands-On Projects (VERY IMPORTANT)
 
