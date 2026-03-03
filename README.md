@@ -182,6 +182,7 @@ journalctl -u nginx
 | VPC | Network |
 | RDS | Database |
 | IAM | Access control |
+| Serverless | AWS Lambda |
 
 📌 Example architecture:
 
