@@ -87,6 +87,12 @@ nslookup google.com
 
 ---
 
+## 3 On-prem server knowledge (must-have)
+- Server hardware: CPU, RAM, RAID levels
+- Storage: SSD (SATA vs NVMe)
+- Server management: iDRAC / iLO
+- Capacity planning & hardware troubleshooting
+
 # 🖥️ PHASE 2 – Linux Server Mastery (LPIC-1)
 
 ## 1️⃣ Linux File System
