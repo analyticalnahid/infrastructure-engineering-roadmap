@@ -238,6 +238,7 @@ fail2ban
 /var/log/nginx/access.log
 
 ```
+## 🔹 App Performance Metrics
 
 📌 Incident flow:
 
