@@ -237,6 +237,11 @@ iptables
 fail2ban
 
 ```
+## 🔹 VPN & firewall concepts
+	• Site-to-site vs remote VPN
+	• Firewall rules, NAT, port forwarding
+	• Security boundaries and traffic flow
+
 
 ---
 
