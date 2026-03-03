@@ -240,6 +240,8 @@ fail2ban
 ```
 ## 🔹 App Performance Metrics
 
+## 🔹 Load Balancing
+
 📌 Incident flow:
 
 ```
