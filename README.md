@@ -2,15 +2,6 @@
 
 ## 🔰 What is an IT Infrastructure Engineer?
 
-An **IT Infrastructure Engineer** designs, builds, operates, and maintains:
-
-- **Servers**
-- **Networks**
-- **Operating Systems**
-- **Cloud platforms**
-- **Security**
-- **Monitoring & automation**
-
 In Japan, this role is often called:
 
 - インフラエンジニア
