@@ -289,13 +289,89 @@ RTO = 2 hours
 RPO = 30 minutes
 ```
 
-# 🔐 PHASE 6 – Virtualization & Containers (VMware, Docker, K8s basics)
-	• VMware installation & configuration
-	• vCenter management
-	• VM migration (vMotion)
-	• Cloning, snapshots
-	• Roles & permissions
-	• Resource pools & templates
+# 🔐 PHASE 6 – Virtualization & Containers (VMware, Docker, K8s Basics)
+
+## 🔹 Virtualization Concepts
+
+- Virtual Machines (VM)
+- Hypervisor (ESXi, Hyper-V)
+- Resource allocation (CPU / RAM / Storage)
+- VM creation & management
+
+📌 Example
+
+```
+Physical Server
+   │
+Hypervisor
+   ├── VM (Linux)
+   ├── VM (Windows Server)
+   └── VM (Database)
+```
+
+---
+
+## 🔹 VMware Basics (Enterprise Standard)
+
+- ESXi installation
+- vCenter management
+- VM snapshots
+- VM cloning
+- VM migration (vMotion)
+- Resource pools
+
+---
+
+## 🔹 Virtual Networking
+
+- Virtual Switch (vSwitch)
+- Port Groups
+- VLAN basics
+
+Example
+
+```
+VM → vSwitch → Physical Network
+```
+
+---
+
+## 🔹 Docker (Container Basics)
+
+- Docker installation
+- Images & Containers
+- Docker Hub / Registry
+- Container networking
+
+📌 Commands
+
+```bash
+docker run nginx
+docker ps
+docker stop container_id
+docker images
+```
+
+---
+
+## 🔹 Kubernetes Basics
+
+- Cluster
+- Node
+- Pod
+- Deployment
+- Service
+
+Example structure
+
+```
+Cluster
+   ├── Node
+   │     └── Pods
+   │          └── Containers
+```
+
+---
 
 # ☁️ PHASE 7 – Cloud Computing (AWS SAA)
 
