@@ -132,6 +132,58 @@ journalctl -u nginx
 
 # 🖥️ PHASE 3 – Windows Server & Active Directory
 
+## 🔹 Windows Server Basics
+
+- Windows Server installation & configuration
+- Roles & Features management
+- Remote Desktop (RDP) management
+- File Server setup
+- Printer Server setup
+
+## 🔹 Active Directory (AD DS)
+
+### Core Components
+
+- Domain
+- Domain Controller
+- Organizational Unit (OU)
+- Users & Groups
+
+📌 Example structure
+
+```
+company.local
+   ├── Sales OU
+   ├── IT OU
+   └── HR OU
+```
+
+## 🔹 User & Group Management
+
+- Create users
+- Create groups
+- Assign permissions
+- Group Policy basics
+
+📌 Example
+
+```
+User → IT Department
+Group → IT_Admin
+Permission → Server access
+```
+
+## 🔹 Group Policy (GPO)
+
+Used for **centralized management of computers**
+
+Examples
+
+- Password policy
+- Software restriction
+- USB control
+- Desktop settings
+
 ---
 
 # 🌐 PHASE 4 – Networking (CCNA)
@@ -163,7 +215,79 @@ journalctl -u nginx
 
 ---
 
-# 🧪 PHASE 5 – Storage, Backup & DR concepts
+# 🧪 PHASE 5 – Storage, Backup & DR Concepts
+
+## 🔹 Storage Types
+
+1️⃣ **DAS (Direct Attached Storage)**
+
+Server connected storage
+
+2️⃣ **NAS (Network Attached Storage)**
+
+File storage over network
+
+3️⃣ **SAN (Storage Area Network)**
+
+High-speed enterprise storage
+
+---
+
+## 🔹 RAID (Very common interview topic)
+
+| RAID | Purpose |
+| --- | --- |
+| RAID 0 | Performance |
+| RAID 1 | Mirroring |
+| RAID 5 | Balance |
+| RAID 10 | Performance + Redundancy |
+
+---
+
+## 🔹 Backup Types
+
+1️⃣ Full Backup
+
+2️⃣ Incremental Backup
+
+3️⃣ Differential Backup
+
+Example flow
+
+```
+Day 1 → Full backup
+Day 2 → Incremental
+Day 3 → Incremental
+```
+
+---
+
+## 🔹 Disaster Recovery (DR)
+
+Concepts for **system failure recovery**
+
+Key elements
+
+- Backup strategy
+- Offsite backup
+- Recovery testing
+- Failover systems
+
+---
+
+## 🔹 Important Metrics
+
+| Metric | Meaning |
+| --- | --- |
+| RTO | Recovery Time Objective |
+| RPO | Recovery Point Objective |
+
+Example
+
+```
+RTO = 2 hours
+RPO = 30 minutes
+```
 
 # 🔐 PHASE 6 – Virtualization & Containers (VMware, Docker, K8s basics)
 	• VMware installation & configuration
