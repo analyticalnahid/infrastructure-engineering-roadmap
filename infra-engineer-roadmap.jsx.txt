@@ -1,0 +1,1133 @@
+import { useState } from "react";
+
+const phases = [
+  {
+    id: 1,
+    emoji: "🔰",
+    title: "PHASE 1",
+    subtitle: "IT & OS Foundations",
+    tag: "ITパスポート → 基本情報技術者試験",
+    color: "#00d4ff",
+    months: "Month 1–2",
+    priority: "ENTRY GATE",
+    marketNote: "Non-IT出身者は必ず取得。企業が「地図を持っている人」と評価する",
+    sections: [
+      {
+        title: "Computer & OS Fundamentals",
+        icon: "💻",
+        items: [
+          "CPU / RAM / Disk の仕組み・容量計算",
+          "Kernel vs User space の概念",
+          "Process vs Thread の違い",
+          "Windows Server / Linux / macOS の用途",
+          "ファイルシステム構造 (NTFS, ext4, xfs)",
+        ],
+        commands: ["top", "ps aux", "free -h", "df -h", "lscpu"],
+      },
+      {
+        title: "Networking Core (最重要)",
+        icon: "🌐",
+        items: [
+          "OSI 7層モデル ← 面接頻出",
+          "TCP/IP プロトコルスタック",
+          "IP Address / Subnet / CIDR 計算",
+          "DNS / DHCP / NAT / PAT の仕組み",
+          "ルーティング (スタティック・ダイナミック)",
+          "スイッチング / VLAN / STP",
+          "TCP vs UDP の使い分け",
+        ],
+        commands: ["ip a", "ping", "traceroute", "nslookup", "netstat -an", "tcpdump"],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ ITパスポート (随時CBT受験可)",
+          "✅ 基本情報技術者試験 (IPA国家資格・年2回)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    emoji: "🐧",
+    title: "PHASE 2",
+    subtitle: "Linux Server Mastery",
+    tag: "LinuC Level 1 → LPIC-1",
+    color: "#ff6b35",
+    months: "Month 1–3",
+    priority: "MUST HAVE",
+    marketNote: "2026年もクラウド上のOSはほぼLinux。ここが弱いとクラウド障害対応できない",
+    sections: [
+      {
+        title: "Linux File System & Structure",
+        icon: "📁",
+        items: [
+          "/etc → 設定ファイル群",
+          "/var/log → ログファイル",
+          "/home → ユーザーディレクトリ",
+          "/proc /sys → カーネル情報",
+          "ファイルシステム mount / umount",
+          "LVM (Logical Volume Manager)",
+        ],
+        commands: ["mount", "lsblk", "fdisk -l", "lvdisplay"],
+      },
+      {
+        title: "User, Permission & Security",
+        icon: "🔐",
+        items: [
+          "chmod / chown / chgrp の完全理解",
+          "SUID / SGID / Sticky bit",
+          "sudo / sudoers 設定",
+          "SSH鍵認証の設定 (面接必須)",
+          "UFW / firewalld 基本設定",
+          "SELinux / AppArmor 概念",
+        ],
+        commands: ["chmod 755", "chown user:group", "ssh-keygen", "ufw allow 22"],
+      },
+      {
+        title: "Services & Process Management",
+        icon: "⚙️",
+        items: [
+          "systemd / systemctl 完全習得",
+          "journalctl でのログ分析",
+          "cron / crontab 定期実行",
+          "ネットワーク設定 (NetworkManager / nmcli)",
+          "パッケージ管理 (apt / yum / dnf)",
+        ],
+        commands: [
+          "systemctl start|stop|enable|status",
+          "journalctl -u nginx -f",
+          "crontab -e",
+        ],
+      },
+      {
+        title: "Web Servers (実務直結)",
+        icon: "🌍",
+        items: [
+          "Nginx インストール・設定・バーチャルホスト",
+          "Apache 設定 (.htaccess, mod_rewrite)",
+          "SSL/TLS証明書設定 (Let's Encrypt)",
+          "リバースプロキシ設定",
+          "ログ解析とパフォーマンスチューニング",
+        ],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ LinuC Level 1 (日本市場特化・推奨)",
+          "✅ LPIC-1 (グローバル向け・併用可)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 3,
+    emoji: "🏢",
+    title: "PHASE 3",
+    subtitle: "Windows Server & Active Directory",
+    tag: "MCP / AZ-800",
+    color: "#7c3aed",
+    months: "Month 2–4",
+    priority: "ENTERPRISE必須",
+    marketNote: "大手企業・金融・公共系は必ずAD環境。スキップ不可",
+    sections: [
+      {
+        title: "Windows Server Administration",
+        icon: "🖥️",
+        items: [
+          "Windows Server 2019/2022 インストール・構成",
+          "役割と機能 (Roles & Features) 管理",
+          "RDP管理・多重接続設定",
+          "ファイルサーバー・DFS設定",
+          "WMI / PowerShell管理 (重要)",
+          "イベントビューアーでの障害調査",
+        ],
+        commands: [
+          "Get-Service | Where-Object {$_.Status -eq 'Running'}",
+          "Test-NetConnection -ComputerName server -Port 443",
+          "Get-EventLog -LogName System -Newest 50",
+        ],
+      },
+      {
+        title: "Active Directory (AD DS)",
+        icon: "🗂️",
+        items: [
+          "ドメイン / ドメインコントローラー 構築",
+          "OU (組織単位) 設計",
+          "ユーザー・グループ管理",
+          "GPO (グループポリシー) 設計・適用",
+          "DNS/DHCP役割 (ADと連携)",
+          "Active Directory複製とサイト設計",
+          "LDAP の基本概念",
+        ],
+      },
+      {
+        title: "Group Policy (GPO) 実務例",
+        icon: "📋",
+        items: [
+          "パスワードポリシー (長さ・複雑さ・有効期限)",
+          "USBデバイス制御",
+          "ソフトウェア配布",
+          "デスクトップ・スクリーンセーバー設定",
+          "監査ポリシー設定",
+        ],
+      },
+    ],
+  },
+  {
+    id: 4,
+    emoji: "🌐",
+    title: "PHASE 4",
+    subtitle: "Networking Deep Dive",
+    tag: "CCNA (必須資格)",
+    color: "#059669",
+    months: "Month 3–5",
+    priority: "HIGH DEMAND 🔥",
+    marketNote: "2026年もCCNAは面接の基準。取得済みで一歩差がつく",
+    sections: [
+      {
+        title: "Network Devices & Architecture",
+        icon: "🔧",
+        items: [
+          "Router / Switch / Firewall / L4 Load Balancer",
+          "Cisco IOS 基本コマンド習得",
+          "OSPF / EIGRP / BGP ルーティングプロトコル",
+          "VLAN / Trunk / Inter-VLAN routing",
+          "STP (Spanning Tree Protocol) 障害対応",
+          "EtherChannel (LACP) 冗長化",
+          "QoS の基本概念",
+        ],
+        commands: [
+          "show ip route",
+          "show interfaces",
+          "show vlan brief",
+          "debug ip ospf events",
+        ],
+      },
+      {
+        title: "Firewall & Security",
+        icon: "🛡️",
+        items: [
+          "ファイアウォールルール設計 (許可・拒否・ログ)",
+          "NAT / PAT 設定",
+          "ポートフォワーディング",
+          "DMZ 設計",
+          "Site-to-Site VPN (IPsec)",
+          "SSL-VPN / リモートアクセスVPN",
+          "ゼロトラスト概念 ← 2025-26年最重要トレンド",
+        ],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ CCNA (Cisco Certified Network Associate)",
+          "📌 実機 or Packet Tracer / GNS3 で必ずハンズオン",
+        ],
+      },
+    ],
+  },
+  {
+    id: 5,
+    emoji: "🗄️",
+    title: "PHASE 5",
+    subtitle: "Storage, Backup & DR",
+    tag: "実務直結知識",
+    color: "#d97706",
+    months: "Month 3–5",
+    priority: "INTERVIEW頻出",
+    marketNote: "障害対応・RTO/RPO設計は上流工程で必須。必ず暗記",
+    sections: [
+      {
+        title: "Storage Types",
+        icon: "💾",
+        items: [
+          "DAS / NAS / SAN の違いと用途",
+          "iSCSI / Fibre Channel の概念",
+          "NFS / CIFS/SMB プロトコル",
+          "SSD: SATA vs NVMe の性能差",
+          "ストレージ容量計画 (Capacity Planning)",
+          "オブジェクトストレージ (S3互換)",
+        ],
+      },
+      {
+        title: "RAID (面接最頻出)",
+        icon: "🔄",
+        items: [
+          "RAID 0: ストライピング (性能↑ 冗長性✗)",
+          "RAID 1: ミラーリング (冗長性◎)",
+          "RAID 5: パリティ分散 (3本以上・バランス型)",
+          "RAID 6: パリティ2重 (2本同時障害耐性)",
+          "RAID 10: RAID1+0 (性能+冗長性・高コスト)",
+          "ホットスペア の概念",
+        ],
+      },
+      {
+        title: "Backup Strategy & DR",
+        icon: "🔒",
+        items: [
+          "フルバックアップ / 増分 / 差分の違い",
+          "3-2-1バックアップルール",
+          "RTO (目標復旧時間) の設計",
+          "RPO (目標復旧時点) の設計",
+          "フェイルオーバー / フェイルバック",
+          "DR訓練 (テスト復旧) の重要性",
+          "クラウドバックアップ (AWS Backup, Azure Backup)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 6,
+    emoji: "☁️",
+    title: "PHASE 6",
+    subtitle: "Cloud Computing",
+    tag: "AWS SAA → Azure AZ-104 → GCP",
+    color: "#2563eb",
+    months: "Month 4–7",
+    priority: "🔥 最重要・市場需要No.1",
+    marketNote: "AWSだけでなくAzureも需要急増。マルチクラウドは高単価案件直結",
+    sections: [
+      {
+        title: "AWS Core (最優先)",
+        icon: "🟠",
+        items: [
+          "EC2: インスタンスタイプ・AMI・Auto Scaling",
+          "VPC: サブネット・ルートテーブル・IGW・NAT GW",
+          "S3: バケットポリシー・ライフサイクル・レプリケーション",
+          "RDS: Multi-AZ・Read Replica・バックアップ",
+          "IAM: ロール・ポリシー・最小権限の原則",
+          "CloudWatch: メトリクス・アラーム・ログ",
+          "ALB / NLB: ターゲットグループ・ヘルスチェック",
+          "Route 53: DNS設定・ヘルスチェック",
+          "CloudFormation / CDK (IaC基礎)",
+        ],
+      },
+      {
+        title: "Azure (企業需要急増 🔥)",
+        icon: "🔵",
+        items: [
+          "Azure Virtual Machines & Scale Sets",
+          "Azure Virtual Network (VNet / Peering)",
+          "Azure Active Directory (Entra ID) ← ADと連携必須",
+          "Azure Storage (Blob / File / Queue)",
+          "Azure Monitor / Log Analytics",
+          "Azure Kubernetes Service (AKS)",
+          "Azure DevOps 基礎",
+        ],
+      },
+      {
+        title: "Cloud Security (必須)",
+        icon: "🔐",
+        items: [
+          "IAM最小権限・MFA必須設定",
+          "VPC セキュリティグループ / NACL",
+          "暗号化 (保存時・転送時)",
+          "CloudTrail / Azure Monitor 監査ログ",
+          "コスト最適化 (予約インスタンス・不要リソース削除)",
+          "ゼロトラストアーキテクチャ設計",
+        ],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ AWS Cloud Practitioner (入門・まず取る)",
+          "✅ AWS Solutions Architect – Associate (SAA) ← メイン",
+          "✅ Azure Administrator (AZ-104) ← 差別化",
+          "📌 GCP Associate Cloud Engineer (任意・プラスα)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 7,
+    emoji: "🐳",
+    title: "PHASE 7",
+    subtitle: "Virtualization & Containers",
+    tag: "VMware / Docker / Kubernetes",
+    color: "#0891b2",
+    months: "Month 5–7",
+    priority: "MODERN INFRA必須",
+    marketNote: "DockerとK8s基礎はもはや標準スキル。できないと案件選択肢が狭まる",
+    sections: [
+      {
+        title: "VMware (オンプレ企業標準)",
+        icon: "🖥️",
+        items: [
+          "ESXi インストール・設定",
+          "vCenter 管理コンソール操作",
+          "VM作成・スナップショット・クローン",
+          "vMotion (無停止マイグレーション)",
+          "分散スイッチ (dvSwitch)",
+          "HA / DRS 設定",
+          "vSphere バックアップ (Veeam等)",
+        ],
+      },
+      {
+        title: "Docker (コンテナ基礎)",
+        icon: "🐋",
+        items: [
+          "Image / Container / Registry の概念",
+          "Dockerfile 作成・最適化",
+          "docker-compose でのマルチコンテナ",
+          "ネットワーク (bridge / host / overlay)",
+          "ボリューム管理・データ永続化",
+          "Docker Hub / ECR / ACR の使い方",
+        ],
+        commands: [
+          "docker build -t myapp:v1 .",
+          "docker-compose up -d",
+          "docker logs container_name -f",
+          "docker exec -it container bash",
+        ],
+      },
+      {
+        title: "Kubernetes (K8s基礎)",
+        icon: "⚓",
+        items: [
+          "Cluster / Node / Pod / Deployment / Service",
+          "kubectl 基本コマンド習得",
+          "ConfigMap / Secret 管理",
+          "Ingress 設定",
+          "AWS EKS / Azure AKS での運用",
+          "Helm チャート基礎",
+        ],
+        commands: [
+          "kubectl get pods -A",
+          "kubectl describe pod <name>",
+          "kubectl apply -f deployment.yaml",
+          "kubectl logs pod_name -f",
+        ],
+      },
+    ],
+  },
+  {
+    id: 8,
+    emoji: "🔐",
+    title: "PHASE 8",
+    subtitle: "Security & Zero Trust",
+    tag: "情報セキュリティマネジメント → SC-900",
+    color: "#dc2626",
+    months: "Month 5–8",
+    priority: "需要急拡大 🔥",
+    marketNote: "2025-26年はゼロトラスト・サイバー攻撃対応できる人材が最高評価",
+    sections: [
+      {
+        title: "Network & Infrastructure Security",
+        icon: "🛡️",
+        items: [
+          "ファイアウォール設計・ルール管理",
+          "IDS / IPS の概念と設定",
+          "WAF (Web Application Firewall)",
+          "DDoS対策 (AWS Shield / Azure DDoS Protection)",
+          "VPN設計 (Site-to-Site / SSL)",
+          "DMZ設計・セキュリティゾーン分離",
+        ],
+      },
+      {
+        title: "Zero Trust Architecture (2026年最重要)",
+        icon: "🔒",
+        items: [
+          "ゼロトラストの原則 (Never trust, always verify)",
+          "ID管理・MFA・条件付きアクセス",
+          "マイクロセグメンテーション",
+          "SIEM (Security Information and Event Management)",
+          "Azure AD Conditional Access",
+          "AWS IAM Identity Center",
+          "特権アクセス管理 (PAM)",
+        ],
+      },
+      {
+        title: "Threat Awareness (面接対策)",
+        icon: "⚠️",
+        items: [
+          "DDoS / Brute Force / SQL Injection",
+          "ランサムウェア対策・バックアップ設計",
+          "フィッシング対策 (DMARC/SPF/DKIM)",
+          "脆弱性管理・パッチ適用プロセス",
+          "インシデントレスポンス手順",
+        ],
+        commands: ["fail2ban-client status", "ufw status verbose", "iptables -L -n -v", "auditctl -l"],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ 情報セキュリティマネジメント試験 (IPA国家資格)",
+          "✅ ITIL Foundation (ITサービス管理・上流工程必須)",
+          "📌 SC-900 Microsoft Security Fundamentals (任意)",
+          "📌 CompTIA Security+ (グローバル向け)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 9,
+    emoji: "🤖",
+    title: "PHASE 9",
+    subtitle: "IaC & DevOps / Automation",
+    tag: "Terraform / Ansible / CI/CD",
+    color: "#7c3aed",
+    months: "Month 6–9",
+    priority: "高単価案件直結 💰",
+    marketNote: "Terraform+Ansibleで構成管理できる人材は単価が大幅UP",
+    sections: [
+      {
+        title: "Infrastructure as Code (IaC)",
+        icon: "📝",
+        items: [
+          "Terraform: HCL構文・Provider・State管理",
+          "Terraform: plan / apply / destroy ワークフロー",
+          "Terraform: モジュール設計・再利用",
+          "AWS CloudFormation: テンプレート設計",
+          "Azure ARM Templates / Bicep",
+          "Terraform Cloud / Atlantis でのチーム運用",
+        ],
+        commands: [
+          "terraform init && terraform plan",
+          "terraform apply -auto-approve",
+          "terraform state list",
+          "terraform import",
+        ],
+      },
+      {
+        title: "Configuration Management",
+        icon: "⚙️",
+        items: [
+          "Ansible: Playbook / Inventory / Role 設計",
+          "Ansible: 冪等性 (Idempotency) の概念",
+          "Ansible: 大量サーバーへの一括設定",
+          "Ansible Vault: 機密情報の暗号化管理",
+          "Chef / Puppet の概念 (知識レベルでOK)",
+        ],
+        commands: [
+          "ansible -i inventory all -m ping",
+          "ansible-playbook -i inventory site.yml",
+          "ansible-vault encrypt secrets.yml",
+        ],
+      },
+      {
+        title: "Scripting & Automation",
+        icon: "💻",
+        items: [
+          "Bash: 実務スクリプト (バックアップ・監視・レポート)",
+          "Python: boto3 (AWS SDK) でのインフラ自動化",
+          "PowerShell: Windows / Azure 管理スクリプト",
+          "Git / GitHub: バージョン管理 (必須)",
+          "GitHub Actions / Jenkins: CI/CDパイプライン基礎",
+        ],
+        commands: [
+          "#!/bin/bash\ndf -h | mail -s 'Disk Report' admin@co.jp",
+          "python3 boto3_script.py",
+          "git commit -m 'feat: add terraform modules'",
+        ],
+      },
+      {
+        title: "Certifications Target",
+        icon: "🎯",
+        items: [
+          "✅ HashiCorp Terraform Associate (IaC実力証明)",
+          "✅ AWS DevOps Engineer (キャリアアップ向け)",
+        ],
+      },
+    ],
+  },
+  {
+    id: 10,
+    emoji: "📊",
+    title: "PHASE 10",
+    subtitle: "Monitoring, DB & Observability",
+    tag: "Prometheus / Grafana / CloudWatch",
+    color: "#0891b2",
+    months: "Month 6–8",
+    priority: "運用業務の核心",
+    marketNote: "障害検知・原因特定・報告書作成がインフラ運用の日常業務",
+    sections: [
+      {
+        title: "Monitoring Stack",
+        icon: "📈",
+        items: [
+          "Prometheus: メトリクス収集・AlertManager",
+          "Grafana: ダッシュボード構築・可視化",
+          "CloudWatch: AWS環境のメトリクス・ログ・アラーム",
+          "Azure Monitor / Log Analytics",
+          "Zabbix: オンプレ環境での監視 (日本企業多い)",
+          "Datadog / New Relic (SaaS型監視)",
+        ],
+      },
+      {
+        title: "Log Management",
+        icon: "📋",
+        items: [
+          "ELK Stack (Elasticsearch + Logstash + Kibana)",
+          "Fluentd / Fluent Bit でのログ集約",
+          "CloudWatch Logs Insights でのクエリ",
+          "/var/log/* の重要ログ一覧を暗記",
+          "ログローテーション設定 (logrotate)",
+          "構造化ログの概念 (JSON logging)",
+        ],
+        commands: [
+          "tail -f /var/log/nginx/error.log",
+          "journalctl -u nginx --since '1 hour ago'",
+          "grep -i 'ERROR' /var/log/app/*.log | wc -l",
+        ],
+      },
+      {
+        title: "Database Basics (インフラ必須)",
+        icon: "🗄️",
+        items: [
+          "MySQL / PostgreSQL インストール・基本設定",
+          "バックアップ (mysqldump / pg_dump)",
+          "レプリケーション設定 (Master-Slave)",
+          "インデックス・スロークエリの概念",
+          "RDS / Azure Database マネージドサービス",
+        ],
+        commands: [
+          "mysqldump -u root -p db_name > backup.sql",
+          "pg_dump dbname | gzip > backup.sql.gz",
+        ],
+      },
+      {
+        title: "Incident Response Flow",
+        icon: "🚨",
+        items: [
+          "1. アラート受信・初動確認 (5分以内)",
+          "2. 影響範囲の特定・エスカレーション判断",
+          "3. 原因調査 (ログ・メトリクス・変更履歴)",
+          "4. 一時対処 → 恒久対処",
+          "5. 再発防止策 + 障害報告書 (障害レポート) 作成",
+        ],
+      },
+    ],
+  },
+  {
+    id: 11,
+    emoji: "🏗️",
+    title: "PHASE 11",
+    subtitle: "Hands-On Portfolio Projects",
+    tag: "GitHub + Portfolio PDF",
+    color: "#059669",
+    months: "Month 7–10",
+    priority: "最重要 - 実務経験代替",
+    marketNote: "資格より「構築経験」が評価される。ポートフォリオが面接の武器になる",
+    sections: [
+      {
+        title: "必須プロジェクト (全部やること)",
+        icon: "✅",
+        items: [
+          "🖥️ Linux サーバー構築 + SSH鍵認証 + UFWハードニング",
+          "🌍 Nginx + SSL (Let's Encrypt) Webサーバー構築",
+          "☁️ AWS: VPC + EC2 + RDS + S3 + IAM 構成",
+          "🐳 Docker + docker-compose でのアプリデプロイ",
+          "📊 Prometheus + Grafana 監視ダッシュボード",
+          "🤖 Terraform で上記AWS構成をコード化",
+          "🔄 Ansible で複数サーバーへの設定自動化",
+          "💾 Bash/Python バックアップ自動化スクリプト",
+        ],
+      },
+      {
+        title: "発展プロジェクト (差別化)",
+        icon: "🚀",
+        items: [
+          "🔵 Azure: VNet + VM + AD構成 (Azure移行シナリオ)",
+          "⚓ EKS / AKS に簡単アプリをデプロイ",
+          "🔄 GitHub Actions CI/CD パイプライン構築",
+          "🔐 Zero Trust: Azure AD Conditional Access設定",
+          "📝 全構成をドキュメント化 (設計書・手順書)",
+        ],
+      },
+      {
+        title: "Portfolio 公開方法",
+        icon: "📁",
+        items: [
+          "GitHub: README日本語+英語 / コメント付きコード",
+          "Zenn / Qiita: 構築手順の技術ブログ記事",
+          "Portfolio PDF: 日本語でまとめた職務経歴書形式",
+          "構成図: draw.io / Mermaid で可視化",
+        ],
+      },
+    ],
+  },
+  {
+    id: 12,
+    emoji: "🇯🇵",
+    title: "PHASE 12",
+    subtitle: "Japan Job Market Strategy",
+    tag: "転職活動・面接対策",
+    color: "#e11d48",
+    months: "Month 10–12",
+    priority: "JOB CRACKING",
+    marketNote: "技術力と同じくらい「働き方・文化への適応」が評価される",
+    sections: [
+      {
+        title: "日本IT市場の現実",
+        icon: "📊",
+        items: [
+          "平均年収: ¥752万 (40-44歳でピーク¥904万)",
+          "有効求人倍率: 全職種平均を大幅に上回る",
+          "SES企業: 未経験者の現実的な入口 (2-3年で実務経験)",
+          "大手企業: 2-3年の実務経験後に転職が王道",
+          "リモート案件増加: 地方からでも応募可能",
+          "オンプレ需要: 金融・公共系は根強く残る",
+        ],
+      },
+      {
+        title: "転職活動 必須準備",
+        icon: "💼",
+        items: [
+          "職務経歴書: 資格一覧 + 構築経験 + 担当業務を具体的に",
+          "GitHubリンク: ポートフォリオのURL必須",
+          "志望動機: 自分のメリットではなく「貢献できること」を",
+          "エージェント: リクルート・マイナビ・ユニゾンキャリア活用",
+          "転職サイト: Green / Findy / Wantedly (IT特化)",
+        ],
+      },
+      {
+        title: "面接 頻出技術質問",
+        icon: "❓",
+        items: [
+          "OSI7層モデルを説明してください",
+          "RAID5とRAID10の違いと使い分けは？",
+          "LinuxでWebサーバーが502エラーを返す。調査手順は？",
+          "AWSのVPCとは何か？サブネット設計の考え方は？",
+          "障害対応で意識していることは何ですか？",
+          "RTO・RPOの設計経験を教えてください",
+          "ゼロトラストとは何か、なぜ重要か？",
+        ],
+      },
+      {
+        title: "日本語 IT技術用語",
+        icon: "🗣️",
+        items: [
+          "障害 (しょうがい) = System failure / Incident",
+          "運用保守 (うんようほしゅ) = Operations & Maintenance",
+          "設計構築 (せっけいこうちく) = Design & Build",
+          "要件定義 (ようけんていぎ) = Requirements definition",
+          "切り戻し (きりもどし) = Rollback",
+          "冗長化 (じょうちょうか) = Redundancy",
+          "負荷分散 (ふかぶんさん) = Load balancing",
+          "縮退運転 (しゅくたいうんてん) = Degraded mode",
+        ],
+      },
+      {
+        title: "JLPT と業務レベル",
+        icon: "🗾",
+        items: [
+          "N3: 障害チケット・手順書を読む (最低ライン)",
+          "N2: 会議参加・報告書作成 (転職市場標準)",
+          "N1: 設計説明・顧客折衝・上流工程 (高評価)",
+        ],
+      },
+    ],
+  },
+];
+
+const certificationRoadmap = [
+  { level: "Entry", certs: ["ITパスポート", "基本情報技術者", "AWS Cloud Practitioner"], color: "#6b7280" },
+  { level: "Foundation", certs: ["LinuC Level 1", "CCNA", "AWS SAA", "情報セキュリティマネジメント"], color: "#059669" },
+  { level: "Professional", certs: ["LinuC Level 2", "Azure AZ-104", "Terraform Associate", "ITIL Foundation"], color: "#2563eb" },
+  { level: "Advanced", certs: ["AWS DevOps Pro", "CKA (Kubernetes)", "CISSP概念", "応用情報技術者"], color: "#7c3aed" },
+];
+
+const careerPath = [
+  { role: "ヘルプデスク / 監視オペレーター", salary: "300-400万", years: "0-1年", desc: "24/365監視・障害一次対応" },
+  { role: "インフラ運用保守エンジニア", salary: "350-500万", years: "1-3年", desc: "Linux/Windows運用・障害対応" },
+  { role: "インフラ構築エンジニア", salary: "450-650万", years: "2-5年", desc: "サーバー・NW設計・構築" },
+  { role: "クラウドエンジニア", salary: "550-800万", years: "3-6年", desc: "AWS/Azure設計・IaC・自動化" },
+  { role: "クラウドアーキテクト / SRE", salary: "700-1200万+", years: "5年+", desc: "全体設計・信頼性工学・チームリード" },
+];
+
+export default function InfraRoadmap() {
+  const [activePhase, setActivePhase] = useState(null);
+  const [activeTab, setActiveTab] = useState("roadmap");
+
+  return (
+    <div style={{
+      fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
+      background: "#0a0a0f",
+      minHeight: "100vh",
+      color: "#e2e8f0",
+      padding: "0",
+    }}>
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%)",
+        borderBottom: "1px solid #21262d",
+        padding: "32px 24px 24px",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          background: "radial-gradient(ellipse at 50% -20%, rgba(0,212,255,0.08) 0%, transparent 60%)",
+          pointerEvents: "none",
+        }} />
+        <div style={{ fontSize: "12px", color: "#00d4ff", letterSpacing: "4px", marginBottom: "8px", textTransform: "uppercase" }}>
+          🇯🇵 Japan IT Job Market 2025–2026
+        </div>
+        <h1 style={{
+          fontSize: "clamp(22px,4vw,36px)", fontWeight: "900", margin: "0 0 8px",
+          background: "linear-gradient(90deg, #00d4ff, #7c3aed, #ff6b35)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: "-1px",
+        }}>
+          インフラエンジニア
+        </h1>
+        <h2 style={{ fontSize: "clamp(14px,2vw,18px)", color: "#94a3b8", margin: "0 0 16px", fontWeight: 400 }}>
+          Complete Job-Ready Roadmap
+        </h2>
+        <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+          {["12 Phases", "15+ Certifications", "11 Projects", "1 Year Plan"].map(tag => (
+            <span key={tag} style={{
+              background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.2)",
+              borderRadius: "4px", padding: "4px 12px", fontSize: "11px", color: "#00d4ff", letterSpacing: "1px",
+            }}>{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Nav Tabs */}
+      <div style={{
+        display: "flex", gap: "0", borderBottom: "1px solid #21262d",
+        background: "#0d1117", padding: "0 24px", overflowX: "auto",
+      }}>
+        {[
+          { id: "roadmap", label: "📋 Roadmap" },
+          { id: "certs", label: "🏆 Certifications" },
+          { id: "career", label: "💰 Career Path" },
+          { id: "timeline", label: "📅 Timeline" },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+            background: "none", border: "none", cursor: "pointer",
+            padding: "14px 20px", fontSize: "13px", fontFamily: "inherit",
+            color: activeTab === tab.id ? "#00d4ff" : "#6b7280",
+            borderBottom: activeTab === tab.id ? "2px solid #00d4ff" : "2px solid transparent",
+            transition: "color 0.2s", whiteSpace: "nowrap",
+          }}>{tab.label}</button>
+        ))}
+      </div>
+
+      <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+
+        {/* ROADMAP TAB */}
+        {activeTab === "roadmap" && (
+          <div>
+            <div style={{
+              background: "rgba(0,212,255,0.05)", border: "1px solid rgba(0,212,255,0.15)",
+              borderRadius: "8px", padding: "14px 18px", marginBottom: "24px",
+              fontSize: "13px", color: "#94a3b8",
+            }}>
+              💡 <strong style={{ color: "#00d4ff" }}>2025-2026年の市場動向:</strong> 資格より<strong style={{ color: "#ff6b35" }}>「実務経験・ポートフォリオ」</strong>が最優先評価。
+              AWSだけでなく<strong style={{ color: "#ff6b35" }}>Azure需要急増</strong>。ゼロトラスト・Terraform・Kubernetes基礎は必須スキルに。
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {phases.map((phase) => (
+                <div key={phase.id} style={{
+                  background: "#0d1117", border: `1px solid ${activePhase === phase.id ? phase.color : "#21262d"}`,
+                  borderRadius: "8px", overflow: "hidden",
+                  transition: "border-color 0.2s, box-shadow 0.2s",
+                  boxShadow: activePhase === phase.id ? `0 0 20px ${phase.color}20` : "none",
+                }}>
+                  {/* Phase Header */}
+                  <button onClick={() => setActivePhase(activePhase === phase.id ? null : phase.id)} style={{
+                    width: "100%", background: "none", border: "none", cursor: "pointer",
+                    padding: "16px 20px", display: "flex", alignItems: "center", gap: "14px",
+                    textAlign: "left", fontFamily: "inherit",
+                  }}>
+                    <span style={{ fontSize: "24px" }}>{phase.emoji}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "11px", color: phase.color, letterSpacing: "2px" }}>{phase.title}</span>
+                        <span style={{
+                          background: `${phase.color}15`, border: `1px solid ${phase.color}30`,
+                          borderRadius: "4px", padding: "2px 8px", fontSize: "10px", color: phase.color,
+                        }}>{phase.priority}</span>
+                        <span style={{ fontSize: "10px", color: "#4b5563" }}>{phase.months}</span>
+                      </div>
+                      <div style={{ color: "#e2e8f0", fontSize: "15px", fontWeight: "700", marginTop: "2px" }}>
+                        {phase.subtitle}
+                      </div>
+                      <div style={{ color: "#6b7280", fontSize: "11px", marginTop: "2px" }}>{phase.tag}</div>
+                    </div>
+                    <span style={{ color: "#4b5563", fontSize: "18px", transform: activePhase === phase.id ? "rotate(90deg)" : "rotate(0)", transition: "transform 0.2s" }}>›</span>
+                  </button>
+
+                  {/* Phase Content */}
+                  {activePhase === phase.id && (
+                    <div style={{ padding: "0 20px 20px", borderTop: `1px solid ${phase.color}20` }}>
+                      <div style={{
+                        background: `${phase.color}08`, border: `1px solid ${phase.color}20`,
+                        borderRadius: "6px", padding: "10px 14px", margin: "16px 0",
+                        fontSize: "12px", color: "#94a3b8",
+                      }}>
+                        📌 <strong style={{ color: phase.color }}>市場メモ:</strong> {phase.marketNote}
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" }}>
+                        {phase.sections.map((section, si) => (
+                          <div key={si} style={{
+                            background: "#161b22", border: "1px solid #21262d",
+                            borderRadius: "6px", padding: "14px",
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                              <span>{section.icon}</span>
+                              <span style={{ color: "#c9d1d9", fontSize: "13px", fontWeight: "600" }}>{section.title}</span>
+                            </div>
+                            <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                              {section.items.map((item, ii) => (
+                                <li key={ii} style={{
+                                  padding: "4px 0", borderBottom: "1px solid #21262d",
+                                  fontSize: "12px", color: "#8b949e", lineHeight: "1.5",
+                                  display: "flex", alignItems: "flex-start", gap: "6px",
+                                }}>
+                                  <span style={{ color: phase.color, flexShrink: 0, marginTop: "2px" }}>▸</span>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                            {section.commands && (
+                              <div style={{ marginTop: "10px" }}>
+                                <div style={{ fontSize: "10px", color: "#4b5563", marginBottom: "6px", letterSpacing: "1px" }}>COMMANDS</div>
+                                {section.commands.map((cmd, ci) => (
+                                  <div key={ci} style={{
+                                    background: "#0d1117", borderRadius: "4px", padding: "5px 8px",
+                                    fontSize: "11px", color: "#00d4ff", fontFamily: "monospace",
+                                    marginBottom: "3px", overflowX: "auto",
+                                  }}>{cmd}</div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CERTIFICATIONS TAB */}
+        {activeTab === "certs" && (
+          <div>
+            <div style={{ marginBottom: "20px", fontSize: "13px", color: "#94a3b8", lineHeight: "1.6" }}>
+              📊 <strong style={{ color: "#00d4ff" }}>2026年推奨取得順序:</strong> 国家資格 → LinuC / CCNA → AWS SAA → Azure AZ-104 → Terraform → ITIL
+            </div>
+            {certificationRoadmap.map((level, li) => (
+              <div key={li} style={{
+                background: "#0d1117", border: "1px solid #21262d",
+                borderRadius: "8px", padding: "20px", marginBottom: "14px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+                  <div style={{
+                    background: level.color, borderRadius: "4px", padding: "4px 12px",
+                    fontSize: "11px", fontWeight: "700", color: "white", letterSpacing: "1px",
+                  }}>{level.level}</div>
+                  <div style={{ height: "1px", flex: 1, background: `${level.color}30` }} />
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                  {level.certs.map((cert, ci) => (
+                    <div key={ci} style={{
+                      background: `${level.color}10`, border: `1px solid ${level.color}30`,
+                      borderRadius: "6px", padding: "10px 16px",
+                      fontSize: "13px", color: "#e2e8f0",
+                    }}>
+                      🏆 {cert}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div style={{
+              background: "rgba(255,107,53,0.05)", border: "1px solid rgba(255,107,53,0.2)",
+              borderRadius: "8px", padding: "16px 20px", marginTop: "20px",
+            }}>
+              <div style={{ color: "#ff6b35", fontSize: "13px", fontWeight: "700", marginBottom: "8px" }}>
+                ⚠️ 重要な市場インサイト
+              </div>
+              <ul style={{ margin: 0, padding: "0 0 0 16px", color: "#94a3b8", fontSize: "13px", lineHeight: "1.8" }}>
+                <li>資格単体より<strong style={{ color: "#e2e8f0" }}>「資格 + 実務での活用経験」</strong>がセットで評価される</li>
+                <li>LinuCは日本市場に特化した認定で、日系企業ではLPICより評価されるケースがある</li>
+                <li>ITIL Foundationはサービス管理の上流工程に入るために有効</li>
+                <li>AWSとAzureの両方を持つと<strong style={{ color: "#e2e8f0" }}>マルチクラウド人材</strong>として高評価</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* CAREER PATH TAB */}
+        {activeTab === "career" && (
+          <div>
+            <div style={{ position: "relative" }}>
+              {careerPath.map((step, i) => (
+                <div key={i} style={{ display: "flex", gap: "16px", marginBottom: "0" }}>
+                  {/* Timeline */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "40px", flexShrink: 0 }}>
+                    <div style={{
+                      width: "36px", height: "36px", borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${["#6b7280","#059669","#2563eb","#7c3aed","#ff6b35"][i]}, transparent)`,
+                      border: `2px solid ${["#6b7280","#059669","#2563eb","#7c3aed","#ff6b35"][i]}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "14px", fontWeight: "700", color: "white", flexShrink: 0,
+                    }}>{i + 1}</div>
+                    {i < careerPath.length - 1 && (
+                      <div style={{ width: "2px", flex: 1, minHeight: "40px", background: "#21262d", margin: "4px 0" }} />
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div style={{
+                    background: "#0d1117", border: "1px solid #21262d", borderRadius: "8px",
+                    padding: "16px 18px", flex: 1, marginBottom: "12px",
+                  }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
+                      <div>
+                        <div style={{ color: "#e2e8f0", fontSize: "15px", fontWeight: "700" }}>{step.role}</div>
+                        <div style={{ color: "#6b7280", fontSize: "12px", marginTop: "4px" }}>{step.desc}</div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ color: "#00d4ff", fontSize: "16px", fontWeight: "700" }}>{step.salary}</div>
+                        <div style={{ color: "#4b5563", fontSize: "11px" }}>{step.years}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              background: "rgba(0,212,255,0.05)", border: "1px solid rgba(0,212,255,0.15)",
+              borderRadius: "8px", padding: "18px 20px", marginTop: "8px",
+            }}>
+              <div style={{ color: "#00d4ff", fontSize: "13px", fontWeight: "700", marginBottom: "10px" }}>
+                🎯 現実的な転職戦略
+              </div>
+              <ol style={{ margin: 0, padding: "0 0 0 18px", color: "#94a3b8", fontSize: "13px", lineHeight: "2" }}>
+                <li>未経験歓迎の<strong style={{ color: "#e2e8f0" }}>SES企業</strong>でキャリアスタート (ヘルプデスク・監視運用から)</li>
+                <li>2-3年で<strong style={{ color: "#e2e8f0" }}>実務経験 + LinuC + CCNA + AWS SAA</strong>を取得</li>
+                <li>ポートフォリオをGitHubに公開し<strong style={{ color: "#e2e8f0" }}>設計構築経験</strong>を証明</li>
+                <li>転職エージェント (Green / ユニゾンキャリア) 経由で<strong style={{ color: "#e2e8f0" }}>自社開発・大手SIer</strong>へ転職</li>
+                <li>Terraform / K8s 習得後に<strong style={{ color: "#e2e8f0" }}>クラウドエンジニア → SRE</strong>へキャリアシフト</li>
+              </ol>
+            </div>
+          </div>
+        )}
+
+        {/* TIMELINE TAB */}
+        {activeTab === "timeline" && (
+          <div>
+            {[
+              {
+                period: "Month 1–3", label: "基礎固め", color: "#6b7280",
+                tasks: [
+                  "ITパスポート取得",
+                  "基本情報技術者試験 受験申込・学習開始",
+                  "Linux (Ubuntu) 環境構築・コマンド習得",
+                  "ネットワーク基礎 (OSI, TCP/IP, DNS, DHCP) 完全理解",
+                  "Windows Server + Active Directory 基礎",
+                  "LinuC Level 1 取得",
+                ],
+                certs: ["ITパスポート", "LinuC Level 1"],
+              },
+              {
+                period: "Month 3–5", label: "専門性構築", color: "#059669",
+                tasks: [
+                  "CCNA 学習 (Packet Tracer ハンズオン必須)",
+                  "VMware ESXi / vCenter 構築練習",
+                  "Docker 習得 + docker-compose プロジェクト作成",
+                  "情報セキュリティマネジメント試験 受験",
+                  "RAID / Backup / DR 概念習得",
+                  "基本情報技術者試験 合格",
+                ],
+                certs: ["基本情報技術者", "CCNA", "情報セキュリティマネジメント"],
+              },
+              {
+                period: "Month 4–7", label: "クラウド習得", color: "#2563eb",
+                tasks: [
+                  "AWS Cloud Practitioner 取得 (1-2週間で可能)",
+                  "AWS SAA 本格学習 (Hands-On Lab必須)",
+                  "VPC / EC2 / S3 / RDS / IAM 実際に構築",
+                  "Terraform 基礎 → AWS構成をコード化",
+                  "Ansible 基礎 → 複数サーバー自動設定",
+                  "Azure 基礎 (AZ-900 → AZ-104 準備)",
+                ],
+                certs: ["AWS Cloud Practitioner", "AWS SAA"],
+              },
+              {
+                period: "Month 6–9", label: "差別化スキル", color: "#7c3aed",
+                tasks: [
+                  "Kubernetes 基礎 + EKS/AKS デプロイ",
+                  "GitHub Actions CI/CD パイプライン",
+                  "Prometheus + Grafana 監視ダッシュボード構築",
+                  "Azure AZ-104 取得 (マルチクラウド差別化)",
+                  "Terraform Associate 取得",
+                  "ITIL Foundation 学習・取得",
+                  "ポートフォリオ GitHub 公開",
+                ],
+                certs: ["Azure AZ-104", "Terraform Associate", "ITIL Foundation"],
+              },
+              {
+                period: "Month 9–12", label: "就活・内定", color: "#e11d48",
+                tasks: [
+                  "職務経歴書・GitHub Portfolio 完成",
+                  "Zenn/Qiita に技術ブログ記事 3本以上",
+                  "転職エージェント登録 (Green / ユニゾンキャリア / マイナビIT)",
+                  "模擬面接 (技術質問対策)",
+                  "JLPT N2 以上で面接の武器に",
+                  "SES企業 or 自社開発企業に応募開始",
+                ],
+                certs: ["内定獲得 🎉"],
+              },
+            ].map((phase, i) => (
+              <div key={i} style={{
+                background: "#0d1117", border: `1px solid ${phase.color}30`,
+                borderLeft: `4px solid ${phase.color}`,
+                borderRadius: "8px", padding: "18px 20px", marginBottom: "14px",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <span style={{ color: phase.color, fontSize: "11px", letterSpacing: "2px" }}>{phase.period}</span>
+                    <div style={{ color: "#e2e8f0", fontSize: "16px", fontWeight: "700" }}>{phase.label}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    {phase.certs.map((cert, ci) => (
+                      <span key={ci} style={{
+                        background: `${phase.color}15`, border: `1px solid ${phase.color}30`,
+                        borderRadius: "4px", padding: "3px 10px", fontSize: "11px", color: phase.color,
+                      }}>🏆 {cert}</span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "6px" }}>
+                  {phase.tasks.map((task, ti) => (
+                    <div key={ti} style={{
+                      display: "flex", alignItems: "flex-start", gap: "8px",
+                      fontSize: "12px", color: "#8b949e", lineHeight: "1.5",
+                    }}>
+                      <span style={{ color: phase.color, flexShrink: 0 }}>□</span>
+                      {task}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        textAlign: "center", padding: "24px", borderTop: "1px solid #21262d",
+        color: "#4b5563", fontSize: "12px",
+      }}>
+        インフラエンジニア完全ロードマップ • Japan IT Market 2025–2026 • 平均年収 ¥752万
+      </div>
+    </div>
+  );
+}

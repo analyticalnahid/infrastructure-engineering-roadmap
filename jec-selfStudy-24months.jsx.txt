@@ -1,0 +1,660 @@
+import { useState, useEffect } from "react";
+
+const MONTHS = [
+  // ── YEAR 1 ──────────────────────────────────────────────
+  {
+    id: 1, month: "Month 1", year: 1,
+    jecClass: "TCP/IP · セキュリティ基礎 · Linux I (start)",
+    selfStudy: [
+      { id:"1a", type:"Cert",    icon:"🎓", title:"ITパスポート", hours:5,
+        resource:"過去問道場 – itpassportsiken.com", link:"https://www.itpassportsiken.com/",
+        tip:"40 practice questions daily. Clear this exam by end of Month 1. It's the easiest cert and builds vocabulary for everything else." },
+      { id:"1b", type:"Hands-on",icon:"💻", title:"OverTheWire: Bandit (Lv 0–10)", hours:3,
+        resource:"overthewire.org/wargames/bandit", link:"https://overthewire.org/wargames/bandit/",
+        tip:"2 levels per night. Teaches real Linux commands through hacking puzzles — directly supports your Linux I class." },
+      { id:"1c", type:"Study",   icon:"📖", title:"Networking Basics – OSI & TCP/IP", hours:2,
+        resource:"Professor Messer Network+ (YouTube, free)", link:"https://www.youtube.com/@professormesser",
+        tip:"Watch 1 section before each JEC TCP/IP class. You'll understand lectures 2x faster." },
+      { id:"1d", type:"Project", icon:"🛠️", title:"GitHub account + first README", hours:1,
+        resource:"github.com", link:"https://github.com",
+        tip:"Write your README in Japanese AND English from day one. This is your public portfolio — start now, not later." },
+    ]
+  },
+  {
+    id: 2, month: "Month 2", year: 1,
+    jecClass: "TCP/IP · Linux I · セキュリティ基礎 · CCNA I (start)",
+    selfStudy: [
+      { id:"2a", type:"Cert",    icon:"🎓", title:"情報セキュリティマネジメント試験 – prep start", hours:5,
+        resource:"IPA公式 + 過去問道場 sekmane.com", link:"https://www.sekmane.com/",
+        tip:"Start here. This IPA national exam is taken in Month 4. 3 months of daily questions = pass rate goes way up." },
+      { id:"2b", type:"Hands-on",icon:"💻", title:"OverTheWire: Bandit (Lv 11–20)", hours:3,
+        resource:"overthewire.org/wargames/bandit", link:"https://overthewire.org/wargames/bandit/",
+        tip:"You're now doing file permissions, SSH keys, and base64 — exactly what Linux I teaches." },
+      { id:"2c", type:"Study",   icon:"📖", title:"Subnetting mastery", hours:2,
+        resource:"subnettingpractice.com (free)", link:"https://subnettingpractice.com/",
+        tip:"Do 20 subnetting problems daily until it's instant. CCNA I exam and JEC tests both need this cold." },
+      { id:"2d", type:"Project", icon:"🛠️", title:"Linux VM setup + basic hardening", hours:2,
+        resource:"Ubuntu Server on VirtualBox (free)", link:"https://www.virtualbox.org/",
+        tip:"Install Ubuntu, create users, set permissions, configure SSH. Document each step — this becomes your first GitHub project." },
+    ]
+  },
+  {
+    id: 3, month: "Month 3", year: 1,
+    jecClass: "Linux I · CCNA I · 無線LAN · ネットワークプログラミング",
+    selfStudy: [
+      { id:"3a", type:"Cert",    icon:"🎓", title:"LPIC-1 (Exam 101) – prep start", hours:5,
+        resource:"Ping-t LPIC-1 (ping-t.com) – best Japanese resource", link:"https://ping-t.com/",
+        tip:"Ping-t is the #1 LPIC study tool in Japan. Aim for 1000+ questions before the exam. Start now, take exam in Month 6." },
+      { id:"3b", type:"Hands-on",icon:"💻", title:"TryHackMe: Pre-Security Path (start)", hours:3,
+        resource:"tryhackme.com/path/outline/presecurity", link:"https://tryhackme.com/path/outline/presecurity",
+        tip:"Free tier is enough. 1 room per day. Covers networking, Linux, web basics — mirrors your JEC curriculum perfectly." },
+      { id:"3c", type:"Study",   icon:"📖", title:"Wireshark packet analysis basics", hours:2,
+        resource:"Chris Greer – Wireshark (YouTube)", link:"https://www.youtube.com/@chrisgreer",
+        tip:"Capture your own traffic on VirtualBox. Filter TCP handshakes, DNS queries. Makes TCP/IP class theory click instantly." },
+      { id:"3d", type:"Project", icon:"🛠️", title:"SSH hardening project (GitHub)", hours:2,
+        resource:"Your Ubuntu VM", link:"https://github.com",
+        tip:"PermitRootLogin no · key auth only · change port · UFW rules. Write a Japanese README. Post to GitHub." },
+    ]
+  },
+  {
+    id: 4, month: "Month 4", year: 1,
+    jecClass: "CCNA I · Linux II (start) · 無線LAN · IoT演習",
+    selfStudy: [
+      { id:"4a", type:"Cert",    icon:"🎓", title:"情報セキュリティマネジメント試験 ← TAKE IT", hours:6,
+        resource:"IPA exam – register at ipa.go.jp/shiken", link:"https://www.ipa.go.jp/shiken/kubun/sg.html",
+        tip:"You've been prepping 3 months. Take it this month. Passing proves you can clear IPA national exams — opens doors for 応用情報 later." },
+      { id:"4b", type:"Hands-on",icon:"💻", title:"TryHackMe: Pre-Security Path (finish)", hours:3,
+        resource:"tryhackme.com/path/outline/presecurity", link:"https://tryhackme.com/path/outline/presecurity",
+        tip:"Finish the full path. Download your certificate from TryHackMe — add it to your portfolio." },
+      { id:"4c", type:"Study",   icon:"📖", title:"Jeremy's IT Lab CCNA – Routing (parallel with class)", hours:3,
+        resource:"Jeremy's IT Lab (YouTube, free)", link:"https://www.youtube.com/@JeremysITLab",
+        tip:"Watch Jeremy's video on each CCNA topic BEFORE the JEC class. You'll be the student who already understands it." },
+      { id:"4d", type:"Project", icon:"🛠️", title:"Packet Tracer: VLAN + inter-VLAN routing lab", hours:2,
+        resource:"Cisco Packet Tracer (free via NetAcad)", link:"https://www.netacad.com/cisco-packet-tracer",
+        tip:"Build a 3-switch VLAN topology with inter-VLAN routing. Save the .pkt file and post to GitHub." },
+    ]
+  },
+  {
+    id: 5, month: "Month 5", year: 1,
+    jecClass: "CCNA II (start) · Linux II · 不正アクセス対策 · ネットワークプログラミング",
+    selfStudy: [
+      { id:"5a", type:"Cert",    icon:"🎓", title:"LPIC-1 Exam 101 ← TAKE IT", hours:5,
+        resource:"Pearson VUE test center (register online)", link:"https://home.pearsonvue.com/lpi",
+        tip:"3 months of Ping-t prep is enough. Book and take it. Passing LPIC-1 (101) means you're halfway to the full cert." },
+      { id:"5b", type:"Hands-on",icon:"💻", title:"OverTheWire: Natas (web security, Lv 0–10)", hours:3,
+        resource:"overthewire.org/wargames/natas", link:"https://overthewire.org/wargames/natas/",
+        tip:"Natas teaches web hacking — SQL injection, file inclusion, XSS basics. Directly relevant to 不正アクセス対策 class." },
+      { id:"5c", type:"Study",   icon:"📖", title:"Python scripting for network automation", hours:3,
+        resource:"Automate the Boring Stuff (automatetheboringstuff.com, free)", link:"https://automatetheboringstuff.com/",
+        tip:"Learn to write scripts that ping hosts, parse IPs, read log files. These become real portfolio projects." },
+      { id:"5d", type:"Project", icon:"🛠️", title:"Bash log monitor script (GitHub)", hours:2,
+        resource:"Your Linux VM", link:"https://github.com",
+        tip:"Script that watches /var/log/auth.log and alerts on 5+ failed logins. Real security tool. Great for resume." },
+    ]
+  },
+  {
+    id: 6, month: "Month 6", year: 1,
+    jecClass: "CCNA II · Linux II · 不正アクセス対策 · IoT演習",
+    selfStudy: [
+      { id:"6a", type:"Cert",    icon:"🎓", title:"LPIC-1 Exam 102 ← TAKE IT", hours:5,
+        resource:"Ping-t LPIC-1 (102) then Pearson VUE", link:"https://ping-t.com/",
+        tip:"Complete LPIC-1 by clearing exam 102. You now have a globally recognized Linux cert. Add it to LinkedIn immediately." },
+      { id:"6b", type:"Hands-on",icon:"💻", title:"TryHackMe: Jr Penetration Tester (start)", hours:4,
+        resource:"tryhackme.com/path/outline/jrpenetrationtester", link:"https://tryhackme.com/path/outline/jrpenetrationtester",
+        tip:"Paid path (~¥2000/month). Covers Nmap, Burp Suite, Metasploit basics. Runs parallel with your 不正アクセス対策 class perfectly." },
+      { id:"6c", type:"Study",   icon:"📖", title:"Jeremy's IT Lab CCNA – ACLs & NAT", hours:3,
+        resource:"Jeremy's IT Lab (YouTube)", link:"https://www.youtube.com/@JeremysITLab",
+        tip:"ACLs and NAT are the hardest CCNA topics. Study these twice — once on Jeremy's channel, once in class." },
+      { id:"6d", type:"Project", icon:"🛠️", title:"Zenn account + first Japanese tech article", hours:2,
+        resource:"zenn.dev", link:"https://zenn.dev",
+        tip:"Write about what you learned: 'SSHサーバーを安全に設定する方法'. Japanese IT community reads Zenn constantly. This builds your reputation." },
+    ]
+  },
+  {
+    id: 7, month: "Month 7", year: 1,
+    jecClass: "CCNA II · Linux II (finish) · ネットワークプログラミング",
+    selfStudy: [
+      { id:"7a", type:"Study",   icon:"📖", title:"応用情報技術者試験 – prep start", hours:4,
+        resource:"応用情報技術者試験 過去問道場 (ap-siken.com)", link:"https://www.ap-siken.com/",
+        tip:"This is a long-term goal (take in Year 2). Start now with 20 questions/day. It's a gateway to 登録セキスペ — the top Japanese security cert." },
+      { id:"7b", type:"Hands-on",icon:"💻", title:"TryHackMe: Jr Penetration Tester (continue)", hours:4,
+        resource:"tryhackme.com/path/outline/jrpenetrationtester", link:"https://tryhackme.com/path/outline/jrpenetrationtester",
+        tip:"Focus on the Burp Suite and web hacking modules this month." },
+      { id:"7c", type:"Project", icon:"🛠️", title:"pfSense firewall home lab", hours:3,
+        resource:"pfSense on VirtualBox (free)", link:"https://www.pfsense.org/",
+        tip:"Set up firewall rules, NAT, VLAN segmentation. This is enterprise-grade skill. Document everything. Post to GitHub." },
+      { id:"7d", type:"Project", icon:"🛠️", title:"Zenn article #2: ネットワーク図を書いてみた", hours:1,
+        resource:"zenn.dev", link:"https://zenn.dev",
+        tip:"Draw your pfSense lab topology in draw.io and write about it in Japanese. Shows both technical and communication skills." },
+    ]
+  },
+  {
+    id: 8, month: "Month 8", year: 1,
+    jecClass: "CCNA II (finish) · ネットワークプログラミング · 教養リテラシー",
+    selfStudy: [
+      { id:"8a", type:"Cert",    icon:"🎓", title:"CCNA – final prep (exam in Month 9)", hours:6,
+        resource:"Jeremy's IT Lab full review + Boson ExSim practice exams", link:"https://www.boson.com/",
+        tip:"Boson ExSim is the closest thing to the real CCNA exam. Do 2 full practice exams. Score 85%+ before booking the real one." },
+      { id:"8b", type:"Hands-on",icon:"💻", title:"HackTheBox: Starting Point (Tier 0–1)", hours:3,
+        resource:"hackthebox.com/hacker/starting-point", link:"https://www.hackthebox.com/hacker/starting-point",
+        tip:"Free tier. Real machines, no hand-holding. Write a Japanese write-up on Zenn for each machine you complete." },
+      { id:"8c", type:"Study",   icon:"📖", title:"応用情報技術者試験 (continue daily questions)", hours:3,
+        resource:"ap-siken.com", link:"https://www.ap-siken.com/",
+        tip:"Now doing 30 questions/day. Focus on the Security and Network sections — they overlap most with your JEC course." },
+      { id:"8d", type:"Project", icon:"🛠️", title:"Python port scanner project (GitHub)", hours:2,
+        resource:"Python socket library + your VM", link:"https://github.com",
+        tip:"Build a basic port scanner in Python. Understand what Nmap is doing under the hood. Great talking point in interviews." },
+    ]
+  },
+  {
+    id: 9, month: "Month 9", year: 1,
+    jecClass: "CCNA II (wrap) · 教養リテラシーII · Summer review",
+    selfStudy: [
+      { id:"9a", type:"Cert",    icon:"🎓", title:"CCNA ← TAKE IT 🎉", hours:4,
+        resource:"Pearson VUE – Cisco CCNA 200-301", link:"https://www.pearsonvue.com/us/en/cisco.html",
+        tip:"Book it. Take it. You've been studying this since Month 1. CCNA is the single biggest credential boost for networking jobs in Japan." },
+      { id:"9b", type:"Hands-on",icon:"💻", title:"AWS Free Tier account setup + EC2 lab", hours:4,
+        resource:"aws.amazon.com/free", link:"https://aws.amazon.com/free/",
+        tip:"Launch an EC2 instance, configure a security group (only port 22 from your IP), SSH in. This is Year 2 cloud prep starting early." },
+      { id:"9c", type:"Study",   icon:"📖", title:"OWASP Top 10 deep study", hours:3,
+        resource:"owasp.org/www-project-top-ten (free)", link:"https://owasp.org/www-project-top-ten/",
+        tip:"Read each vulnerability. Find a real-world example for each one. Understanding the WHY makes everything else click." },
+      { id:"9d", type:"Project", icon:"🛠️", title:"Mid-year portfolio review", hours:2,
+        resource:"Your GitHub", link:"https://github.com",
+        tip:"Count your projects. You should have: SSH hardening, Packet Tracer lab, bash script, port scanner, pfSense lab. If missing any — build it now." },
+    ]
+  },
+  // ── YEAR 2 ──────────────────────────────────────────────
+  {
+    id: 10, month: "Month 10", year: 2,
+    jecClass: "CCNA III (start) · サーバ構築 · Cloud Design · ルータセキュリティ",
+    selfStudy: [
+      { id:"10a", type:"Cert",    icon:"🎓", title:"AWS Cloud Practitioner – prep start", hours:4,
+        resource:"AWS Skill Builder (free) + freeCodeCamp YouTube", link:"https://explore.skillbuilder.aws/",
+        tip:"This cert validates cloud fundamentals. Takes 4–6 weeks of study. Pairs perfectly with JEC's Cloud Design class starting now." },
+      { id:"10b", type:"Hands-on",icon:"💻", title:"TryHackMe: SOC Level 1 Path (start)", hours:4,
+        resource:"tryhackme.com/path/outline/soclevel1", link:"https://tryhackme.com/path/outline/soclevel1",
+        tip:"This path covers SIEM, log analysis, threat intel, incident response — mirrors your Year 2 security classes almost exactly." },
+      { id:"10c", type:"Study",   icon:"📖", title:"CCNP Security overview (awareness level)", hours:2,
+        resource:"Cisco CCNP Security overview docs", link:"https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/professional/ccnp-security.html",
+        tip:"You don't need to study for this yet — just understand what it covers. JEC lets you aim for CCNP Security as an upper cert." },
+      { id:"10d", type:"Project", icon:"🛠️", title:"AWS VPC + Security Groups lab (document on GitHub)", hours:3,
+        resource:"AWS Free Tier", link:"https://aws.amazon.com/free/",
+        tip:"Build a VPC with public/private subnets, security groups, and a bastion host. This is real cloud architecture." },
+    ]
+  },
+  {
+    id: 11, month: "Month 11", year: 2,
+    jecClass: "CCNA III · サーバ構築 · セキュリティログ解析 · ルータセキュリティ",
+    selfStudy: [
+      { id:"11a", type:"Cert",    icon:"🎓", title:"AWS Cloud Practitioner ← TAKE IT", hours:3,
+        resource:"Pearson VUE – AWS-CP exam", link:"https://aws.amazon.com/certification/certified-cloud-practitioner/",
+        tip:"Take this early Year 2. The AWS brand is huge in Japan (AWS Japan is a major employer). Even CP shows cloud commitment." },
+      { id:"11b", type:"Hands-on",icon:"💻", title:"Elastic SIEM home lab (start)", hours:4,
+        resource:"Elastic Security free tier – elastic.co/security", link:"https://www.elastic.co/security",
+        tip:"Ship your Linux server logs to Elastic. Create detection rules for failed SSH logins. This is a premium portfolio project." },
+      { id:"11c", type:"Study",   icon:"📖", title:"応用情報技術者試験 (intensive prep)", hours:4,
+        resource:"ap-siken.com + 過去問 full papers", link:"https://www.ap-siken.com/",
+        tip:"Exam is in Month 14. Step up to 40+ questions/day now. Focus on afternoon essay questions — they require Japanese writing skill too." },
+      { id:"11d", type:"Project", icon:"🛠️", title:"Log analysis lab write-up (Zenn article #3)", hours:2,
+        resource:"zenn.dev", link:"https://zenn.dev",
+        tip:"Document your Elastic SIEM setup in Japanese. 'Elasticで自作SOCを作ってみた' type title. These articles get read by hiring managers." },
+    ]
+  },
+  {
+    id: 12, month: "Month 12", year: 2,
+    jecClass: "CCNA III · サーバ構築 · ファイアウォールトレーニング · セキュリティログ解析",
+    selfStudy: [
+      { id:"12a", type:"Study",   icon:"📖", title:"CompTIA Security+ – prep start", hours:4,
+        resource:"Professor Messer Security+ SY0-701 (YouTube, free)", link:"https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-training-course/",
+        tip:"Globally recognised. Japanese multinationals — AWS Japan, IBM Japan, DXC, Accenture — value this cert. Start now, take in Month 15." },
+      { id:"12b", type:"Hands-on",icon:"💻", title:"HackTheBox: Easy Linux machines (3 boxes)", hours:4,
+        resource:"hackthebox.com", link:"https://www.hackthebox.com",
+        tip:"Do 3 Easy Linux boxes. Write Japanese write-ups on Zenn for each. Shows you can think like an attacker — very valued in security roles." },
+      { id:"12c", type:"Project", icon:"🛠️", title:"Firewall rules lab + Zenn write-up", hours:3,
+        resource:"pfSense + your VM network", link:"https://www.pfsense.org/",
+        tip:"Build a DMZ topology: Internet → Firewall → DMZ (web server) → Firewall → Internal LAN. Mirror what JEC teaches in class." },
+      { id:"12d", type:"Study",   icon:"📖", title:"応用情報技術者試験 (full mock exams)", hours:3,
+        resource:"ap-siken.com past papers", link:"https://www.ap-siken.com/",
+        tip:"Do 1 full past paper per week under timed conditions. Both AM and PM sections." },
+    ]
+  },
+  {
+    id: 13, month: "Month 13", year: 2,
+    jecClass: "サイバーディフェンス · サイバーセキュリティ · サーバセキュリティ · データベース",
+    selfStudy: [
+      { id:"13a", type:"Cert",    icon:"🎓", title:"応用情報技術者試験 ← TAKE IT 🎉", hours:3,
+        resource:"IPA exam – ipa.go.jp/shiken", link:"https://www.ipa.go.jp/shiken/kubun/ap.html",
+        tip:"This is the gateway to 登録セキスペ (the gold standard security cert in Japan). Passing this is a massive signal to Japanese employers." },
+      { id:"13b", type:"Hands-on",icon:"💻", title:"TryHackMe: SOC Level 1 (finish)", hours:4,
+        resource:"tryhackme.com", link:"https://tryhackme.com/path/outline/soclevel1",
+        tip:"Finish the full SOC path. Download your certificate. This runs perfectly with JEC's サイバーディフェンス class this month." },
+      { id:"13c", type:"Study",   icon:"📖", title:"MITRE ATT&CK framework study", hours:3,
+        resource:"attack.mitre.org (free)", link:"https://attack.mitre.org/",
+        tip:"Study the top 10 most common attack techniques. Map each one to a detection rule. This is what real SOC analysts do." },
+      { id:"13d", type:"Project", icon:"🛠️", title:"Cyber defence playbook (GitHub + Japanese PDF)", hours:2,
+        resource:"Your notes + GitHub", link:"https://github.com",
+        tip:"Write an incident response playbook in Japanese. 'SSHブルートフォース検知・対応手順書' for example. Real documentation skill." },
+    ]
+  },
+  {
+    id: 14, month: "Month 14", year: 2,
+    jecClass: "サイバーディフェンス · サーバセキュリティ · Cloud Design · 卒業制作 (start)",
+    selfStudy: [
+      { id:"14a", type:"Cert",    icon:"🎓", title:"CompTIA Security+ ← TAKE IT", hours:4,
+        resource:"Pearson VUE – SY0-701", link:"https://www.comptia.org/certifications/security",
+        tip:"You've been prepping since Month 12. Take it now. Security+ is the most internationally recognized entry security cert — opens global doors." },
+      { id:"14b", type:"Study",   icon:"📖", title:"AWS Solutions Architect Associate – prep start", hours:4,
+        resource:"Stephane Maarek's SAA course (Udemy – buy on sale ~¥1500)", link:"https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/",
+        tip:"SAA-C03 is the most valued AWS cert for cloud engineers in Japan. Study alongside JEC's Cloud Design class for maximum retention." },
+      { id:"14c", type:"Project", icon:"🛠️", title:"GuardDuty + CloudTrail monitoring lab (AWS)", hours:3,
+        resource:"AWS Free Tier", link:"https://aws.amazon.com/guardduty/",
+        tip:"Enable GuardDuty on your AWS account. Generate test findings. Review in Security Hub. This is real cloud security operations." },
+      { id:"14d", type:"Hands-on",icon:"💻", title:"Prowler AWS security audit", hours:2,
+        resource:"github.com/prowler-cloud/prowler (free)", link:"https://github.com/prowler-cloud/prowler",
+        tip:"Run Prowler against your AWS account. Fix every finding. Document the before/after. This is a portfolio-grade project." },
+    ]
+  },
+  {
+    id: 15, month: "Month 15", year: 2,
+    jecClass: "卒業制作 · ネットワークデザイン · Cloud Design",
+    selfStudy: [
+      { id:"15a", type:"Study",   icon:"📖", title:"AWS SAA (continue – intensive)", hours:5,
+        resource:"Stephane Maarek + Practice exams (Jon Bonso – Udemy)", link:"https://www.udemy.com/course/aws-certified-solutions-architect-associate-saa-c03/",
+        tip:"Jon Bonso's practice exams are the closest to the real SAA exam. Score 80%+ before booking." },
+      { id:"15b", type:"Cert",    icon:"🎓", title:"登録セキスペ (情報処理安全確保支援士) – prep start", hours:4,
+        resource:"IPA公式 + 情報処理安全確保支援士 過去問道場", link:"https://www.ipa.go.jp/shiken/kubun/sc.html",
+        tip:"The gold standard for security in Japan. Requires passing 応用情報技術者 first (done in Month 13). Start studying now — exam is Month 18." },
+      { id:"15c", type:"Project", icon:"🛠️", title:"卒業制作: combine security + cloud topic", hours:4,
+        resource:"Your AWS + GitHub", link:"https://github.com",
+        tip:"Suggest: 'AWS上でセキュアなWebアプリ基盤を構築する'. Shows cloud + security together. Strong 卒業制作 impresses hiring managers at company visits." },
+      { id:"15d", type:"Hands-on",icon:"💻", title:"HackTheBox: Medium Linux machine (1 box)", hours:3,
+        resource:"hackthebox.com", link:"https://www.hackthebox.com",
+        tip:"One Medium box. Write it up in Japanese on Zenn. Solving a Medium HTB box is a real technical achievement." },
+    ]
+  },
+  {
+    id: 16, month: "Month 16", year: 2,
+    jecClass: "卒業制作 · ルータセキュリティ (advanced) · CCNA III review",
+    selfStudy: [
+      { id:"16a", type:"Cert",    icon:"🎓", title:"AWS Solutions Architect Associate ← TAKE IT 🎉", hours:4,
+        resource:"Pearson VUE – SAA-C03", link:"https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+        tip:"This is the most impactful single cert you can hold for Japan cloud/security roles. NTT Com, AWS Japan, IIJ all respect this." },
+      { id:"16b", type:"Study",   icon:"📖", title:"登録セキスペ (continue daily questions)", hours:4,
+        resource:"IPA 過去問 full papers (SC)", link:"https://www.ipa.go.jp/shiken/kubun/sc.html",
+        tip:"SC exam has 4 sections: AM1, AM2, PM1, PM2. AM1 is covered by 応用情報. Focus study time on AM2, PM1, PM2 now." },
+      { id:"16c", type:"Project", icon:"🛠️", title:"CI/CD security pipeline (GitHub Actions + Trivy)", hours:3,
+        resource:"github.com/aquasecurity/trivy", link:"https://github.com/aquasecurity/trivy",
+        tip:"Set up a GitHub Actions pipeline that scans a Docker image with Trivy on every push. DevSecOps skill — very hot in Japan 2025+." },
+      { id:"16d", type:"Study",   icon:"📖", title:"Japanese IT interview prep (技術面接)", hours:2,
+        resource:"Paiza (paiza.jp) + tech interview question banks", link:"https://paiza.jp/",
+        tip:"Practice explaining: VLANとは何ですか、SSHのセキュリティ強化方法、AWSのIAMベストプラクティス — in Japanese, out loud, every day." },
+    ]
+  },
+  {
+    id: 17, month: "Month 17", year: 2,
+    jecClass: "卒業制作 (intensive) · 就職活動",
+    selfStudy: [
+      { id:"17a", type:"Project", icon:"🛠️", title:"Portfolio finalization (GitHub + PDF)", hours:5,
+        resource:"GitHub + Canva (for PDF resume visuals)", link:"https://github.com",
+        tip:"Minimum 6 GitHub projects with Japanese READMEs. Minimum 4 Zenn articles. Clean profile photo on GitHub. This is your job application." },
+      { id:"17b", type:"Study",   icon:"📖", title:"登録セキスペ (mock PM2 essays)", hours:4,
+        resource:"IPA past papers – SC PM2 section", link:"https://www.ipa.go.jp/shiken/mondai-kaiotu/index.html",
+        tip:"PM2 is a 2-hour written essay on an incident response scenario. Practice writing structured Japanese security responses." },
+      { id:"17c", type:"Cert",    icon:"🎓", title:"職務経歴書 (IT resume) – first draft", hours:3,
+        resource:"Rikunabi Next / Green / Wantedly", link:"https://www.green-japan.com/",
+        tip:"List every cert, every GitHub project, every tool. Japanese enterprise recruiters want detail. One page is NOT enough — 2–3 pages is normal." },
+      { id:"17d", type:"Hands-on",icon:"💻", title:"CTF: PicoCTF (beginner competitions)", hours:3,
+        resource:"picoctf.org (free)", link:"https://picoctf.org/",
+        tip:"CTF participation looks excellent on a security resume. Even beginner-level CTF shows initiative that classmates won't have." },
+    ]
+  },
+  {
+    id: 18, month: "Month 18", year: 2,
+    jecClass: "卒業制作 (complete) · 就職活動 · 卒業",
+    selfStudy: [
+      { id:"18a", type:"Cert",    icon:"🎓", title:"登録セキスペ (情報処理安全確保支援士) ← TAKE IT 🏆", hours:5,
+        resource:"IPA exam – register at ipa.go.jp/shiken", link:"https://www.ipa.go.jp/shiken/kubun/sc.html",
+        tip:"This is the goal. Japan's most respected security certification. Holders get prefix '登録セキスペ' and are listed in a national registry. 大手企業 actively seek this." },
+      { id:"18b", type:"Project", icon:"🛠️", title:"Final portfolio PDF (Japanese) – print-ready", hours:3,
+        resource:"Canva + your GitHub content", link:"https://www.canva.com/",
+        tip:"A4 format, Japanese, clean design. Include: certs, GitHub links, Zenn articles, project diagrams, a one-line tech summary per project." },
+      { id:"18c", type:"Study",   icon:"📖", title:"Job interview preparation (final)", hours:4,
+        resource:"Your network: seniors, JEC career center, LinkedIn Japan", link:"https://www.linkedin.com/",
+        tip:"Request mock interviews through JEC's career center. Ask JEC alumni currently working at NTT / IIJ / AWS for informational interviews." },
+      { id:"18d", type:"Study",   icon:"📖", title:"Next goal: AWS Security Specialty (post-graduation)", hours:2,
+        resource:"AWS Skill Builder – Security Specialty path", link:"https://aws.amazon.com/certification/certified-security-specialty/",
+        tip:"After graduation and 6 months of work experience, aim for this. It's the cloud security cert that gets you senior-level cloud security roles in Japan." },
+    ]
+  },
+];
+
+const TYPE_META = {
+  "Cert":     { color: "#FFB800", bg: "#FFB80018", label: "CERT"    },
+  "Study":    { color: "#00C8FF", bg: "#00C8FF18", label: "STUDY"   },
+  "Hands-on": { color: "#00FFB2", bg: "#00FFB218", label: "HANDS-ON"},
+  "Project":  { color: "#C678FF", bg: "#C678FF18", label: "PROJECT" },
+};
+
+const YEAR_COLORS = { 1: "#00FFB2", 2: "#FF6B35" };
+
+export default function Planner() {
+  const [completed, setCompleted] = useState({});
+  const [activeMonth, setActiveMonth] = useState(1);
+  const [expanded, setExpanded] = useState(null);
+  const [activeYear, setActiveYear] = useState(1);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await window.storage.get("jec-24mo-progress");
+        if (r) setCompleted(JSON.parse(r.value));
+      } catch {}
+    })();
+  }, []);
+
+  const save = async (next) => {
+    try { await window.storage.set("jec-24mo-progress", JSON.stringify(next)); } catch {}
+  };
+
+  const toggle = (id) => {
+    const next = { ...completed, [id]: !completed[id] };
+    setCompleted(next);
+    save(next);
+  };
+
+  const allTopics = MONTHS.flatMap(m => m.selfStudy);
+  const totalDone = allTopics.filter(t => completed[t.id]).length;
+  const totalPct  = Math.round((totalDone / allTopics.length) * 100);
+
+  const yearMonths = MONTHS.filter(m => m.year === activeYear);
+  const currentMonth = MONTHS.find(m => m.id === activeMonth) || MONTHS[0];
+  const monthDone = currentMonth.selfStudy.filter(t => completed[t.id]).length;
+  const monthPct  = Math.round((monthDone / currentMonth.selfStudy.length) * 100);
+
+  const yc = YEAR_COLORS[currentMonth.year];
+
+  // cert milestones for sidebar
+  const certs = MONTHS.flatMap(m =>
+    m.selfStudy.filter(t => t.type === "Cert").map(t => ({
+      ...t, month: m.month, monthId: m.id
+    }))
+  );
+
+  return (
+    <div style={{
+      minHeight:"100vh", background:"#080B10",
+      fontFamily:"'IBM Plex Mono', 'Courier New', monospace",
+      color:"#CBD5E0", display:"flex", flexDirection:"column",
+    }}>
+      {/* Top bar */}
+      <div style={{
+        background:"#0D1117", borderBottom:"1px solid #161B22",
+        padding:"20px 20px 0", flexShrink:0,
+      }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:12, marginBottom:16 }}>
+          <div>
+            <div style={{ fontSize:9, letterSpacing:5, color:"#30363D", marginBottom:4 }}>
+              日本電子専門学校 · ネットワークセキュリティ科
+            </div>
+            <div style={{ fontSize:"clamp(20px,5vw,32px)", fontWeight:900, color:"#F0F6FC", letterSpacing:-1, lineHeight:1 }}>
+              2-YEAR SELF-STUDY<br/>
+              <span style={{ color: yc }}>MISSION PLAN</span>
+            </div>
+            <div style={{ fontSize:10, color:"#30363D", marginTop:5 }}>
+              18 study months · 72 tasks · parallel curriculum
+            </div>
+          </div>
+          {/* Global ring */}
+          <div style={{ textAlign:"center" }}>
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="#161B22" strokeWidth="7"/>
+              <circle cx="40" cy="40" r="34" fill="none" stroke={yc} strokeWidth="7"
+                strokeDasharray={`${2*Math.PI*34*totalPct/100} ${2*Math.PI*34}`}
+                strokeLinecap="round"
+                transform="rotate(-90 40 40)"
+                style={{ transition:"stroke-dasharray 0.6s ease", filter:`drop-shadow(0 0 6px ${yc}80)` }}
+              />
+              <text x="40" y="44" textAnchor="middle" fill="#F0F6FC" fontSize="16" fontWeight="900"
+                fontFamily="'IBM Plex Mono', monospace">{totalPct}%</text>
+            </svg>
+            <div style={{ fontSize:9, color:"#30363D", marginTop:2 }}>{totalDone}/{allTopics.length} tasks</div>
+          </div>
+        </div>
+
+        {/* Year tabs */}
+        <div style={{ display:"flex", gap:0, marginBottom:0 }}>
+          {[1,2].map(y => (
+            <button key={y} onClick={() => { setActiveYear(y); setActiveMonth(y===1?1:10); }}
+              style={{
+                padding:"10px 24px", background:"none", border:"none",
+                borderBottom: activeYear===y ? `2px solid ${YEAR_COLORS[y]}` : "2px solid transparent",
+                cursor:"pointer", color: activeYear===y ? YEAR_COLORS[y] : "#30363D",
+                fontSize:11, fontFamily:"inherit", fontWeight: activeYear===y?700:400,
+                letterSpacing:2, transition:"all 0.2s",
+              }}>
+              YEAR {y}
+              <span style={{ marginLeft:8, fontSize:9, color: activeYear===y ? YEAR_COLORS[y]+"80" : "#30363D" }}>
+                {y===1?"Month 1–9":"Month 10–18"}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Month strip */}
+        <div style={{ display:"flex", gap:6, overflowX:"auto", padding:"12px 0 14px" }}>
+          {yearMonths.map(m => {
+            const done = m.selfStudy.filter(t => completed[t.id]).length;
+            const all  = m.selfStudy.length;
+            const full = done === all;
+            const active = m.id === activeMonth;
+            return (
+              <button key={m.id} onClick={() => setActiveMonth(m.id)}
+                style={{
+                  flexShrink:0, padding:"8px 12px", cursor:"pointer",
+                  background: active ? `${yc}15` : "transparent",
+                  border: `1px solid ${active ? yc+"60" : full ? "#238636" : "#161B22"}`,
+                  borderRadius:6, color: active ? yc : full ? "#238636" : "#30363D",
+                  fontSize:10, fontFamily:"inherit", fontWeight: active?700:400,
+                  letterSpacing:1, transition:"all 0.2s",
+                  position:"relative",
+                }}>
+                {m.month.replace("Month ","")}
+                {full && <span style={{ position:"absolute", top:-4, right:-4, fontSize:8, color:"#238636" }}>✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div style={{ display:"flex", flex:1, minHeight:0, flexWrap:"wrap" }}>
+        {/* Left: topic list */}
+        <div style={{ flex:"1 1 320px", padding:"20px", minWidth:0, borderRight:"1px solid #161B22" }}>
+          {/* Month header */}
+          <div style={{ marginBottom:16 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+              <span style={{
+                fontSize:22, fontWeight:900, color:"#F0F6FC"
+              }}>{currentMonth.month}</span>
+              <span style={{
+                fontSize:9, padding:"3px 10px", borderRadius:3,
+                background:`${yc}15`, color:yc, border:`1px solid ${yc}40`, letterSpacing:2,
+              }}>YEAR {currentMonth.year}</span>
+            </div>
+            <div style={{ fontSize:10, color:"#30363D", marginTop:4 }}>
+              🏫 <span style={{ color:"#484F58" }}>{currentMonth.jecClass}</span>
+            </div>
+            {/* month progress */}
+            <div style={{ marginTop:10, display:"flex", alignItems:"center", gap:10 }}>
+              <div style={{ flex:1, height:3, background:"#161B22", borderRadius:2 }}>
+                <div style={{
+                  height:"100%", width:`${monthPct}%`, background:yc, borderRadius:2,
+                  boxShadow:`0 0 6px ${yc}60`, transition:"width 0.4s ease",
+                }}/>
+              </div>
+              <span style={{ fontSize:10, color: yc, fontWeight:700, minWidth:36 }}>{monthPct}%</span>
+            </div>
+          </div>
+
+          {/* Tasks */}
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {currentMonth.selfStudy.map(task => {
+              const done = !!completed[task.id];
+              const open = expanded === task.id;
+              const tm   = TYPE_META[task.type];
+              return (
+                <div key={task.id} style={{
+                  background: done ? "#0D1F0D" : "#0D1117",
+                  border:`1px solid ${done?"#238636":"#161B22"}`,
+                  borderRadius:8, overflow:"hidden",
+                  transition:"all 0.25s",
+                }}>
+                  <div style={{ padding:"14px 16px", display:"flex", alignItems:"center", gap:12, cursor:"pointer" }}
+                    onClick={() => setExpanded(open ? null : task.id)}>
+                    {/* checkbox */}
+                    <div onClick={e=>{ e.stopPropagation(); toggle(task.id); }}
+                      style={{
+                        width:20, height:20, borderRadius:5, flexShrink:0, cursor:"pointer",
+                        border:`2px solid ${done?"#238636":"#30363D"}`,
+                        background: done?"#238636":"transparent",
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        transition:"all 0.2s",
+                      }}>
+                      {done && <span style={{ fontSize:11, color:"#fff", fontWeight:900 }}>✓</span>}
+                    </div>
+                    {/* content */}
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                        <span style={{ fontSize:13 }}>{task.icon}</span>
+                        <span style={{
+                          fontSize:13, fontWeight:700,
+                          color: done?"#30363D":"#F0F6FC",
+                          textDecoration: done?"line-through":"none",
+                        }}>{task.title}</span>
+                      </div>
+                      <div style={{ marginTop:4, display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
+                        <span style={{
+                          fontSize:9, padding:"2px 7px", borderRadius:3, letterSpacing:1,
+                          background:tm.bg, color:tm.color, border:`1px solid ${tm.color}30`,
+                        }}>{tm.label}</span>
+                        <span style={{ fontSize:9, color:"#30363D" }}>~{task.hours}h/wk</span>
+                      </div>
+                    </div>
+                    <span style={{
+                      fontSize:10, color:"#30363D", flexShrink:0,
+                      transform: open?"rotate(90deg)":"none", transition:"transform 0.2s",
+                    }}>▶</span>
+                  </div>
+
+                  {open && (
+                    <div style={{ padding:"0 16px 16px 48px", borderTop:"1px solid #161B22", paddingTop:12 }}>
+                      <div style={{
+                        background:"#080B10", borderRadius:6, padding:"10px 12px", marginBottom:10,
+                        borderLeft:`3px solid ${yc}`,
+                      }}>
+                        <div style={{ fontSize:9, color:"#30363D", letterSpacing:2, marginBottom:4 }}>💡 TIP</div>
+                        <div style={{ fontSize:11, color:"#8B949E", lineHeight:1.7 }}>{task.tip}</div>
+                      </div>
+                      <div style={{ fontSize:10, color:"#484F58", marginBottom:8 }}>
+                        📚 {task.resource}
+                      </div>
+                      <a href={task.link} target="_blank" rel="noreferrer"
+                        onClick={e=>e.stopPropagation()}
+                        style={{
+                          display:"inline-flex", alignItems:"center", gap:6, fontSize:10,
+                          color:yc, textDecoration:"none", padding:"5px 12px",
+                          borderRadius:5, border:`1px solid ${yc}40`, background:`${yc}10`,
+                        }}>
+                        → Open Resource
+                      </a>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Month nav */}
+          <div style={{ display:"flex", justifyContent:"space-between", marginTop:20 }}>
+            <button onClick={() => {
+                const prev = activeMonth - 1;
+                if(prev >= 1){ setActiveMonth(prev); if(MONTHS.find(m=>m.id===prev)?.year !== currentMonth.year) setActiveYear(currentMonth.year===2?1:2); }
+              }}
+              disabled={activeMonth===1}
+              style={{ padding:"8px 16px", background:"none", border:"1px solid #161B22", borderRadius:6,
+                color:activeMonth===1?"#161B22":"#484F58", cursor:activeMonth===1?"default":"pointer",
+                fontFamily:"inherit", fontSize:10 }}>
+              ← Prev month
+            </button>
+            <button onClick={() => {
+                const next = activeMonth + 1;
+                if(next <= 18){ setActiveMonth(next); if(MONTHS.find(m=>m.id===next)?.year !== currentMonth.year) setActiveYear(currentMonth.year===1?2:1); }
+              }}
+              disabled={activeMonth===18}
+              style={{ padding:"8px 16px", background: activeMonth===18?"none":`${yc}15`,
+                border:`1px solid ${activeMonth===18?"#161B22":yc+"40"}`, borderRadius:6,
+                color:activeMonth===18?"#161B22":yc, cursor:activeMonth===18?"default":"pointer",
+                fontFamily:"inherit", fontSize:10, fontWeight:700 }}>
+              Next month →
+            </button>
+          </div>
+        </div>
+
+        {/* Right: cert roadmap sidebar */}
+        <div style={{ width:"220px", flexShrink:0, padding:"20px 16px", background:"#0D1117" }}>
+          <div style={{ fontSize:9, color:"#30363D", letterSpacing:3, marginBottom:14 }}>CERT ROADMAP</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
+            {certs.map((c, i) => {
+              const done = !!completed[c.id];
+              const active = c.monthId === activeMonth;
+              return (
+                <div key={c.id} style={{ display:"flex", gap:10, cursor:"pointer" }}
+                  onClick={() => { setActiveMonth(c.monthId); setActiveYear(MONTHS.find(m=>m.id===c.monthId)?.year||1); }}>
+                  {/* timeline */}
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", width:18 }}>
+                    <div style={{
+                      width:14, height:14, borderRadius:"50%", flexShrink:0,
+                      background: done?"#238636": active?`${YEAR_COLORS[MONTHS.find(m=>m.id===c.monthId)?.year||1]}`:"#161B22",
+                      border:`2px solid ${done?"#238636": active?YEAR_COLORS[MONTHS.find(m=>m.id===c.monthId)?.year||1]:"#30363D"}`,
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      boxShadow: active ? `0 0 8px ${YEAR_COLORS[MONTHS.find(m=>m.id===c.monthId)?.year||1]}80` : "none",
+                      transition:"all 0.3s",
+                    }}>
+                      {done && <span style={{ fontSize:7, color:"#fff" }}>✓</span>}
+                    </div>
+                    {i < certs.length-1 && <div style={{ width:1, flex:1, minHeight:16, background:"#161B22" }}/>}
+                  </div>
+                  {/* label */}
+                  <div style={{ paddingBottom:14 }}>
+                    <div style={{
+                      fontSize:10, fontWeight: active?700:400,
+                      color: done?"#238636": active?YEAR_COLORS[MONTHS.find(m=>m.id===c.monthId)?.year||1]:"#484F58",
+                      lineHeight:1.3, marginBottom:2,
+                    }}>{c.title.replace(" ← TAKE IT 🎉","").replace(" ← TAKE IT 🏆","").replace(" – prep start","").replace(" – final prep (exam in Month 9)","")}</div>
+                    <div style={{ fontSize:8, color:"#30363D" }}>{c.month}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div style={{ marginTop:20, borderTop:"1px solid #161B22", paddingTop:14 }}>
+            <div style={{ fontSize:9, color:"#30363D", letterSpacing:3, marginBottom:10 }}>TASK TYPES</div>
+            {Object.entries(TYPE_META).map(([k,v]) => (
+              <div key={k} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:v.color, flexShrink:0 }}/>
+                <span style={{ fontSize:9, color:"#484F58" }}>{k}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop:16, fontSize:9, color:"#30363D", lineHeight:1.6 }}>
+            Progress saved<br/>automatically ✓
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
